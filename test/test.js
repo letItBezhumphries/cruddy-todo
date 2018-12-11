@@ -34,7 +34,7 @@ describe('getNextUniqueId', () => {
     });
   });
 
-  it('should give an id as a zero padded string', (done) => {
+  it('should give an id as a zero padded string', (done) => { //00001
     counter.getNextUniqueId((err, id) => {
       expect(id).to.be.a.string;
       expect(id).to.match(/^0/);
