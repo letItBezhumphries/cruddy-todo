@@ -26,28 +26,19 @@ exports.create = (text, callback) => {
   }); 
 };
 
-var data = [];
-
 exports.readAll = (callback) => {
   fs.readdir(exports.dataDir, (err, files) => {
     if (err, null) {
       throw ('error reading directory');
     } else {
-      _.each(files, (id, text) => {
+      var data = [];
+      _.each(files, (text) => {
         text = text.split('.')[0];
-        console.log('FILES', files);
         data.push({ id: text, text: text});        
       });
-      console.log('DATA:', data);
       callback(null, data);
     }
   });
- 
-  // _.each(items, (text, id) => {
-  //   console.log('ITEMS', items);
-  //   data.push({ id, text });
-  //   console.log('DATA:', data);
-  // });
 };
 
 exports.readOne = (id, callback) => {
