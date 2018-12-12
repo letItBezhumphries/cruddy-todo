@@ -4,21 +4,50 @@ const _ = require('underscore');
 const counter = require('./counter');
 
 var items = {};
-
+var filepath;
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+  //create a new file for new todos
+  counter.getNextUniqueId((err, data) => { //data = 00001
+    if (err, null) {
+      throw ('error getting nextId');
+    } else {
+      filepath = path.join(exports.dataDir, `${data}.txt`); // 00001.txt
+      items[data] = text; //items 
+      fs.writeFile(filepath, items[data], (err, fileData) => {
+        if (err, null) {
+          throw ('error writing file');
+        } else {
+          callback(null, { id: data, text: items[data] });
+        }
+      });
+    }
+  }); 
 };
 
+var data = [];
+
 exports.readAll = (callback) => {
-  var data = [];
-  _.each(items, (text, id) => {
-    data.push({ id, text });
+  fs.readdir(exports.dataDir, (err, files) => {
+    if (err, null) {
+      throw ('error reading directory');
+    } else {
+      _.each(files, (id, text) => {
+        text = text.split('.')[0];
+        console.log('FILES', files);
+        data.push({ id: text, text: text});        
+      });
+      console.log('DATA:', data);
+      callback(null, data);
+    }
   });
-  callback(null, data);
+ 
+  // _.each(items, (text, id) => {
+  //   console.log('ITEMS', items);
+  //   data.push({ id, text });
+  //   console.log('DATA:', data);
+  // });
 };
 
 exports.readOne = (id, callback) => {
