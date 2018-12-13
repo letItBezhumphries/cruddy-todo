@@ -42,14 +42,10 @@ exports.readAll = (callback) => {
 };
 
 exports.readOne = (id, callback) => {
-  console.log(id);
   var fileName = `${id}.txt`;
-
   var filePath = path.join(exports.dataDir, fileName);
   var text = items[id];
-
   fs.readFile(filePath, 'utf8', (err, text) => {
-    console.log('TEXT', text);
     if (!text || err) {
       callback(new Error(`No item with id: ${id}`));
     } else {
@@ -59,13 +55,20 @@ exports.readOne = (id, callback) => {
 };
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    items[id] = text;
-    callback(null, { id, text });
-  }
+  var filepath = path.join(exports.dataDir, `${id}.txt`);
+  fs.readFile(filepath, (err, data) => {
+    if (err) {
+      callback(new Error('error id does not exist'));
+    } else {
+      fs.writeFile(filepath, text, (err, text) => {
+        if (err, null) {
+          throw ('error updating todo text');
+        } else {
+          callback(null, { id: text, text: text });
+        }
+      });
+    }
+  });
 };
 
 exports.delete = (id, callback) => {
