@@ -9,12 +9,12 @@ var filepath;
 
 exports.create = (text, callback) => {
   //create a new file for new todos
-  counter.getNextUniqueId((err, data) => { //data = 00001
+  counter.getNextUniqueId((err, data) => {
     if (err, null) {
       throw ('error getting nextId');
     } else {
-      filepath = path.join(exports.dataDir, `${data}.txt`); // 00001.txt
-      items[data] = text; //items 
+      filepath = path.join(exports.dataDir, `${data}.txt`);
+      items[data] = text;
       fs.writeFile(filepath, items[data], (err, fileData) => {
         if (err, null) {
           throw ('error writing file');
@@ -56,7 +56,7 @@ exports.readOne = (id, callback) => {
 
 exports.update = (id, text, callback) => {
   var filepath = path.join(exports.dataDir, `${id}.txt`);
-  fs.readFile(filepath, (err, data) => {
+  fs.readFile(filepath, (err) => {
     if (err) {
       callback(new Error('error id does not exist'));
     } else {
@@ -72,14 +72,20 @@ exports.update = (id, text, callback) => {
 };
 
 exports.delete = (id, callback) => {
-  var item = items[id];
-  delete items[id];
-  if (!item) {
-    // report an error if item not found
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback();
-  }
+  var filepath = path.join(exports.dataDir, `${id}.txt`);
+  fs.readFile(filepath, (err) => {
+    if (err) {
+      callback(new Error(`No item with id: ${id}`));
+    } else {
+      fs.unlink(filepath, (err, id) => {
+        if (err) {
+          throw err;
+        } else {
+          callback(null, {id});
+        }
+      });
+    }
+  });
 };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
